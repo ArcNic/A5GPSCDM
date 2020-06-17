@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "374016078284",
+    "firebase_url": "https://gpsfinal-2e6ca.firebaseio.com",
+    "project_id": "gpsfinal-2e6ca",
+    "storage_bucket": "gpsfinal-2e6ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:374016078284:android:068703c0042c79c2c36d69",
+        "android_client_info": {
+          "package_name": "com.examplenicolaslima.a5gpsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "374016078284-4ktl0f8f7747in8rhi3fdue3pagqg03f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.examplenicolaslima.a5gpsapp",
+            "certificate_hash": "2b583b207f2a27f71427c64b434d4f66bfdf875e"
+          }
+        },
+        {
+          "client_id": "374016078284-ncuqujt68von5v3eeustugh6rv4mihlc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjiKzUUej8SYS2uj_K3dq_tkcfiTi0m4Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "374016078284-ncuqujt68von5v3eeustugh6rv4mihlc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
