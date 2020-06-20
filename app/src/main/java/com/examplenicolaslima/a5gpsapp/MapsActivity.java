@@ -1,5 +1,6 @@
 package com.examplenicolaslima.a5gpsapp;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -39,7 +40,6 @@ import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
-
     private Marker currentLocationMaker;
     private LatLng currentLocationLatLong;
     private DatabaseReference mDatabase;
@@ -55,20 +55,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         startGettingLocations();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        getMarkers();
+        addMarcador();
 
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -95,16 +85,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
         currentLocationMaker = mMap.addMarker(markerOptions);
 
-        //Move a câmera para a licalização Atual
+        //Move a câmera para a localização Atual
         CameraPosition cameraPosition = new CameraPosition.Builder().zoom(20).target(currentLocationLatLong).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         LocationData locationData = new LocationData(location.getLatitude(), location.getLongitude());
         mDatabase.child("location").child(String.valueOf(new Date().getTime())).setValue(locationData);
         Toast.makeText(this, "Localização Atualizada", Toast.LENGTH_SHORT).show();
+        addMarcador();
 
-        getMarkers();
+    }
 
+    private void  addMarcador(){
+        //Pega posição do firebase e envia para função getAllLocation
+        mDatabase.child("location").addListenerForSingleValueEvent(
+
+                new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null)
+                    pegaLocalizacao((Map<String,Object>) dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void pegaLocalizacao(Map<String,Object> locations){
+        //Recebe posições da função getMarkers e envia para addGreenMarker
+
+        for (Map.Entry<String, Object> entry : locations.entrySet()){
+            Date newDate = new Date(Long.valueOf(entry.getKey()));
+            Map singleLocation = (Map) entry.getValue();
+            LatLng latLng = new LatLng((Double) singleLocation.get("latitude"), (Double) singleLocation.get("longitude"));
+            addGreenMarker(newDate, latLng);
+        }
+    }
+
+    //Adiciona Marcadores no mapa onde o usuário esteve, no titulo dos marcadores há data e hora de quanto esteve no local
+    private void addGreenMarker(Date newDate, LatLng latLng){
+        SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title(dt.format(newDate));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
     }
 
     @Override
@@ -234,41 +261,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void getMarkers(){
-        mDatabase.child("location").addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Get map of users in datasnapshot
-                        if (dataSnapshot.getValue() == null)
-                            getAllLocations((Map<String,Object>) dataSnapshot.getValue());
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-    }
-
-    private void getAllLocations(Map<String, Object> locations) {
-
-        for (Map.Entry<String, Object> entry : locations.entrySet()){
-
-            Date newDate = new Date(Long.valueOf(entry.getKey()));
-            Map singleLocation = (Map) entry.getValue();
-            LatLng latLng = new LatLng((Double) singleLocation.get("latitude"), (Double)singleLocation.get("longitude"));
-            addGreenMarker(newDate,latLng);
-
-        }
-    }
-
-    private void addGreenMarker(Date newDate, LatLng latLng) {
-        //SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        //markerOptions.title(dt.format(newDate));
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        mMap.addMarker(markerOptions);
-    }
 }
