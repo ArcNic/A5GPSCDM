@@ -49,7 +49,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -212,13 +211,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         permissions.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
         permissionsToRequest = findUnAskedPermissions(permissions);
 
-        //Check if GPS and Network are on, if not asks the user to turn on
+        //verifica se GPS e rede estão ativas
         if (!isGPS && !isNetwork) {
             showSettingsAlert();
         } else {
-            // check permissions
 
-            // check permissions for later versions
+            // Verifica permissão para versoes mais antigas 'M' = Marshmallow
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (permissionsToRequest.size() > 0) {
                     requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]),
@@ -229,7 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
 
-        //Checks if FINE LOCATION and COARSE Location were granted
+
         if (ActivityCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -239,7 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        //Starts requesting location updates
+
         if (canGetLocation) {
             if (isGPS) {
                 lm.requestLocationUpdates(
@@ -248,7 +246,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
             } else if (isNetwork) {
-                // from Network Provider
 
                 lm.requestLocationUpdates(
                         LocationManager.NETWORK_PROVIDER,
